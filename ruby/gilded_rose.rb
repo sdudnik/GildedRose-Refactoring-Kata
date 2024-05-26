@@ -4,54 +4,55 @@ class GildedRose
     @items = items
   end
 
-  def update_quality()
-    @items.each do |item|
-      if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert"
-        if item.quality > 0
-          if item.name != "Sulfuras, Hand of Ragnaros"
-            item.quality = item.quality - 1
-          end
-        end
-      else
-        if item.quality < 50
-          item.quality = item.quality + 1
-          if item.name == "Backstage passes to a TAFKAL80ETC concert"
-            if item.sell_in < 11
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-            if item.sell_in < 6
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-          end
-        end
-      end
-      if item.name != "Sulfuras, Hand of Ragnaros"
-        item.sell_in = item.sell_in - 1
-      end
-      if item.sell_in < 0
-        if item.name != "Aged Brie"
-          if item.name != "Backstage passes to a TAFKAL80ETC concert"
-            if item.quality > 0
-              if item.name != "Sulfuras, Hand of Ragnaros"
-                item.quality = item.quality - 1
-              end
-            end
-          else
-            item.quality = item.quality - item.quality
-          end
-        else
-          if item.quality < 50
-            item.quality = item.quality + 1
-          end
-        end
-      end
+def update_quality(items)
+  items.each do |item|
+    case item.name
+    when "Aged Brie"
+      update_aged_brie_quality(item)
+    when "Sulfuras"
+      update_sulfuras_quality(item)
+    when "Backstage passes"
+      update_backstage_passes_quality(item)
+    when "Conjured"
+      update_conjured_quality(item)
+    else
+      update_standard_quality(item)
     end
+
+    item.sell_in -= 1
   end
 end
+
+def update_standard_quality(item)
+  item.quality -= 1
+  item.quality -= 1 if item.sell_in < 0
+end
+
+def update_aged_brie_quality(item)
+  item.quality += 1
+end
+
+def update_sulfuras_quality(item)
+  # Do nothing
+end
+
+def update_backstage_passes_quality(item)
+  if item.sell_in <= 10
+    item.quality += 3
+  elsif item.sell_in <= 5
+    item.quality += 2
+  else
+    item.quality -= 1
+  end
+
+  item.quality = 0 if item.sell_in < 0
+end
+
+def update_conjured_quality(item)
+  item.quality -= 2
+  item.quality -= 2 if item.sell_in < 0
+end
+
 
 class Item
   attr_accessor :name, :sell_in, :quality
