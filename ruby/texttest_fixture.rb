@@ -32,6 +32,6 @@ gilded_rose = GildedRose.new items
   #  gilded_rose.update_quality(items)
   # Виправлення: перебрати кожен елемент масиву та оновити його окремо
   items.each do |item|
-    gilded_rose.update_quality(item)
+    gilded_rose.update_quality(items) # Оновлено, передається items як аргумент
   end
 end
